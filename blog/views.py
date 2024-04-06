@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from blog.models import Post, Comment, Tag
+from blog.forms import CommentForm
 
 
 def blog_index(request):
@@ -21,9 +23,22 @@ def blog_tag(request, tag):
 
 def blog_post(request, pk):
     post = Post.objects.get(pk=pk)
+    form = CommentForm()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = Comment(
+                author=form.cleaned_data["author"],
+                content=form.cleaned_data["body"],
+                post=post,
+            )
+            comment.save()
+            return HttpResponseRedirect(request.path_info)
+
     comments = Comment.objects.filter(post=post)
     context = {
         'post': post,
         'comments': comments,
+        'form': form,
     }
     return render(request, 'blog/templates/blog/post.html', context)
