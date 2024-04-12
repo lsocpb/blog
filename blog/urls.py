@@ -5,4 +5,5 @@ urlpatterns = [
     path('', views.blog_index, name='blog_index'),
     path('tag/<tag>/', views.blog_tag, name='blog_tag'),
     path('post/<int:pk>/', views.blog_post, name='blog_post'),
+    path('addpost/', views.add_post, name='add_post'),
 ]

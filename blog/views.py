@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from blog.models import Post, Comment, Tag
 from blog.forms import CommentForm
-from blog.forms import CustomUserCreationForm, CustomAuthenticationForm
+from blog.forms import CustomUserCreationForm, CustomAuthenticationForm, PostForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import auth
 
@@ -78,3 +78,14 @@ def user_login(request):
 def user_logout(request):
     auth.logout(request)
     return redirect('blog_index')
+
+
+def add_post(request):
+    form = PostForm(request.POST or None)
+    template_name = 'blog/templates/blog/addpost.html'
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('blog_index')
+    context = {'form': form}
+    return render(request, template_name, context)

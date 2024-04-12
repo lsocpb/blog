@@ -1,4 +1,5 @@
 from django.db import models
+from froala_editor.fields import FroalaField
 
 
 class Tag(models.Model):
@@ -10,7 +11,7 @@ class Tag(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = FroalaField()
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField(Tag)

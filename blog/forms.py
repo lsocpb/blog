@@ -2,7 +2,10 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms.widgets import PasswordInput, TextInput
+from froala_editor.widgets import FroalaEditor
 
+from blog.models import Post
+from django.forms import ModelForm
 
 class CommentForm(forms.Form):
     author = forms.CharField(
@@ -35,3 +38,12 @@ class CustomAuthenticationForm(AuthenticationForm):
         "class": "form-control",
         "placeholder": "Password"
     }))
+
+class PostForm(ModelForm):
+    title = forms.CharField(label='Title',
+                            widget=forms.TextInput(
+                                attrs={'class': 'w-full focus:ring-0 h-full focus:outline-none text-2xl'}))
+    content = forms.CharField(widget=FroalaEditor)
+    class Meta:
+        model = Post
+        fields = ('title', 'content')
