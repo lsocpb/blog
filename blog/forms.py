@@ -39,11 +39,13 @@ class CustomAuthenticationForm(AuthenticationForm):
         "placeholder": "Password"
     }))
 
+
 class PostForm(ModelForm):
     title = forms.CharField(label='Title',
                             widget=forms.TextInput(
                                 attrs={'class': 'w-full focus:ring-0 h-full focus:outline-none text-2xl'}))
     content = forms.CharField(widget=FroalaEditor)
+
     class Meta:
         model = Post
         fields = ('title', 'content')

@@ -1,20 +1,33 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Django Blog</title>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
     {{ form.media }}
 </head>
 <body>
-<a href="{% url 'logout' %}">Logout</a>
-<a href="{% url 'login' %}">Login</a>
-<a href="{% url 'addpost' %}">Add Post</a>
-<h1>Django Blog</h1>
-<p>Hi, {{ user.username }}!</p>
-<a href="{% url 'blog_index' %}">Home</a>
-<hr>
+<nav>
+    <div class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="logo">
+        <h1>BLOGGERS</h1>
+    </div>
+    <ul>
+        <li>
+            <a href="{% url 'logout' %}">Logout</a>
+        </li>
+        <li>
+            <a href="{% url 'login' %}">Login</a>
+        </li>
+        <li>
+            <a href="{% url 'addpost' %}">Add Post</a>
+        </li>
+    </ul>
+</nav>
 {% block title %}{% endblock %}
+<div class="posts">
 {% block content %}{% endblock %}
+</div>
 </body>
 </html>

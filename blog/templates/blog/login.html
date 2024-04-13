@@ -1,14 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
 <html lang="en">
-<h1>Login</h1>
-
-<form method="post">
-
-    {% csrf_token %}
-
-    {{ loginform.as_p }}
-
-    <input type="submit" value="Login">
-
-</form>
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+</head>
+<body data-aos="fade-in">
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form method="post">
+            <h1>Create Account</h1>
+            <div class="social-container">
+            </div>
+            <span>or use your email for registration</span>
+            {{ loginform.name }}
+            {{ loginform.email }}
+            {{ loginform.password }}
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form method="post">
+            <h1>Sign in</h1>
+            {{ loginform.username }}
+            {{ loginform.password }}
+            <a href="#">Forgot your password?</a>
+            {% csrf_token %}
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Want to be the best blogger in the world? Join us!</p>
+                <button class="ghost" id="signUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>AOS.init()</script>
+</body>
 </html>
