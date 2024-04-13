@@ -7,7 +7,6 @@ from froala_editor.widgets import FroalaEditor
 from blog.models import Post
 from django.forms import ModelForm
 
-
 class CommentForm(forms.Form):
     author = forms.CharField(
         max_length=60,
@@ -25,23 +24,6 @@ class CommentForm(forms.Form):
 
 
 class CustomUserCreationForm(UserCreationForm):
-    username = forms.CharField(widget=TextInput(attrs={
-        "class": "form-control",
-        "placeholder": "Username"
-    }))
-    email = forms.CharField(widget=TextInput(attrs={
-        "class": "form-control email-field",
-        "placeholder": "Email"
-    }))
-    password1 = forms.CharField(widget=PasswordInput(attrs={
-        "class": "form-control",
-        "placeholder": "Password"
-    }))
-    password2 = forms.CharField(widget=PasswordInput(attrs={
-        "class": "form-control",
-        "placeholder": "Password Confirmation"
-    }))
-
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ["username", "email", "password1", "password2"]
