@@ -18,7 +18,7 @@
             align-items: center;
             flex-direction: column;
             font-family: 'Montserrat', sans-serif;
-            height: 80vh;
+            height: 50vh;
         }
 
         h1 {
@@ -49,7 +49,7 @@
             border: none;
             padding: 12px 15px;
             margin: 8px 0;
-            width: 85%;
+            width: 50%;
         }
 
         input[type="submit"] {
@@ -64,12 +64,27 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             transition: transform 80ms ease-in;
+            margin-top: 50px;
         }
-        
-        .email-field{
-            width: 100%;
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 4px;
         }
-        
+
+        .required {
+            border-color: #ff0000; /* Kolor obramowania dla pola wymaganego */
+        }
+
+        .invalid {
+            border-color: #ff0000; /* Kolor obramowania dla pola nieprawidłowego */
+        }
+
+        .valid {
+            border-color: #00ff00; /* Kolor obramowania dla pola prawidłowego */
+        }
+
         .signin-text {
             margin-top: 20px;
             font-size: 14px;
@@ -80,25 +95,35 @@
             color: #1d65d0;
             text-decoration: none;
         }
-        .register-text a{
+
+        .register-text a {
             color: #1d65d0;
-            text-decoration: none; 
+            text-decoration: none;
         }
     </style>
 </head>
 <body data-aos="fade-in">
     <form method="post">
-        <div class="register-text">
-        <h1>Register <a>To stay tuned!</a></h1>
+        <div class="register-text" style="margin-bottom: 50px">
+            <h1>Register <a>To stay tuned!</a></h1>
         </div>
         {% csrf_token %}
-        {{ registerform.as_p }}
+        {% for field in registerform %}
+            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" placeholder="{{ field.label }}">
+            {% if field.errors %}
+                <div class="error-message">
+                    {% for error in field.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
         <input type="submit" value="Register">
     </form>
     <div class="signin-text">
         Already have an account? <a href="{% url 'login' %}">Sign in!</a>
     </div>
-<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-<script>AOS.init()</script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>AOS.init()</script>
 </body>
 </html>

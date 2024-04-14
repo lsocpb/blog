@@ -50,7 +50,7 @@ def blog_post(request, pk):
 def register(request):
     form = CustomUserCreationForm()
     if request.method == 'POST':
-        form = CustomUserCreationForm(request, data=request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('blog_index')
