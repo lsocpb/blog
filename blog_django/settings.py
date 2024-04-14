@@ -129,3 +129,8 @@ FROALA_EDITOR_PLUGINS = ('align', 'char_counter', 'code_beautifier', 'code_view'
 FRAOLA_EDITOR_THIRD_PARTY = ('image_aviary', 'spell_checker')
 
 FROALA_INCLUDE_JQUERY = False
+
+FROALA_UPLOAD_PATH = 'uploads/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

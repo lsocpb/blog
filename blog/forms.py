@@ -7,6 +7,7 @@ from froala_editor.widgets import FroalaEditor
 from blog.models import Post
 from django.forms import ModelForm
 
+
 class CommentForm(forms.Form):
     author = forms.CharField(
         max_length=60,

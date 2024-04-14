@@ -22,7 +22,7 @@
   cursor: pointer;">{{ tag.name }}</span>
                         {% endfor %}
                         <h4><a href="{% url 'blog_post' post.pk %}">{{ post.title }}</a></h4>
-                        <p>{{ post.content|truncatewords:20 }}</p>
+                        <p>{{ post.content|safe|truncatewords:20 }}</p>
                         <div class="user">
                             <img src="{{ post.author.profile_pic_url }}" alt="{{ post.author.username }}" />
                             <div class="user-info">
