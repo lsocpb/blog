@@ -25,6 +25,23 @@ class CommentForm(forms.Form):
 
 
 class CustomUserCreationForm(UserCreationForm):
+    username = forms.CharField(widget=TextInput(attrs={
+        "class": "form-control",
+        "placeholder": "Username"
+    }))
+    email = forms.CharField(widget=TextInput(attrs={
+        "class": "form-control email-field",
+        "placeholder": "Email"
+    }))
+    password1 = forms.CharField(widget=PasswordInput(attrs={
+        "class": "form-control",
+        "placeholder": "Password"
+    }))
+    password2 = forms.CharField(widget=PasswordInput(attrs={
+        "class": "form-control",
+        "placeholder": "Password Confirmation"
+    }))
+
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ["username", "email", "password1", "password2"]
