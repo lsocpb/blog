@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from blog.models import Post, Comment, Tag
@@ -80,18 +81,26 @@ def user_logout(request):
     return redirect('blog_index')
 
 
+@login_required
 def add_post(request):
-    form = PostForm(request.POST or None)
-    template_name = 'blog/templates/blog/addpost.html'
     if request.method == 'POST':
+        form = PostForm(request.POST)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.author = request.user.username
+            post.save()
+            form.save_m2m()
             return redirect('blog_index')
-    context = {'form': form}
-    return render(request, template_name, context)
+    else:
+        form = PostForm()
+    return render(request, 'blog/templates/blog/addpost.html', {'form': form})
 
 
+@login_required()
 def edit_post(request, pk):
+    if request.user != Post.objects.get(pk=pk).author and not request.user.is_superuser:
+        return redirect('blog_index')
+
     post = Post.objects.get(pk=pk)
     form = PostForm(request.POST or None, instance=post)
     template_name = 'blog/templates/blog/editpost.html'
@@ -99,5 +108,17 @@ def edit_post(request, pk):
         if form.is_valid():
             form.save()
             return redirect('blog_index')
+        else:
+            print(form.errors)
     context = {'form': form}
     return render(request, template_name, context)
+
+
+@login_required
+def delete_post(request, pk):
+    if request.user != Post.objects.get(pk=pk).author and not request.user.is_superuser:
+        return redirect('blog_index')
+
+    post = Post.objects.get(pk=pk)
+    post.delete()
+    return redirect('blog_index')

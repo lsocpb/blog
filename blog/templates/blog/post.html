@@ -23,8 +23,11 @@
     <div class="post-content">
         <p>{{ post.content | safe }}</p>
     </div>
-    <div class="post-edit">
-        <a href="{% url 'edit_post' post.id %}" class="btn btn-primary">Edit</a>
+    <div class="post-modify">
+        {% if user.username == post.author or user.is_superuser %}
+            <a href="{% url 'edit_post' post.id %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'delete_post' post.id %}" class="btn btn-danger">Delete</a>
+        {% endif %}
     </div>
     <div class="comment-section">
         <h3>Submit a comment:</h3>
