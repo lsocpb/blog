@@ -7,9 +7,7 @@
         {% block posts %}
             {% for post in posts %}
                 <div class="card" style="margin: 10px; background-color: #fff; border-radius: 10px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2); overflow: hidden; width: 300px;">
-                    <div class="card-header">
-                        <img src="{{ post.image_url }}" alt="{{ post.title }}" />
-                    </div>
+
                     <div class="card-body">
                         {% for tag in post.tags.all %}
                             <span class="tag" style="  background: #47bcd4;
