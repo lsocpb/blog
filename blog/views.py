@@ -89,3 +89,15 @@ def add_post(request):
             return redirect('blog_index')
     context = {'form': form}
     return render(request, template_name, context)
+
+
+def edit_post(request, pk):
+    post = Post.objects.get(pk=pk)
+    form = PostForm(request.POST or None, instance=post)
+    template_name = 'blog/templates/blog/editpost.html'
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('blog_index')
+    context = {'form': form}
+    return render(request, template_name, context)

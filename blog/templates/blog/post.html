@@ -23,6 +23,9 @@
     <div class="post-content">
         <p>{{ post.content | safe }}</p>
     </div>
+    <div class="post-edit">
+        <a href="{% url 'edit_post' post.id %}" class="btn btn-primary">Edit</a>
+    </div>
     <div class="comment-section">
         <h3>Submit a comment:</h3>
         <form method="post" class="comment-form">

@@ -8,5 +8,6 @@ urlpatterns = [
     path('tag/<tag>/', views.blog_tag, name='blog_tag'),
     path('post/<int:pk>/', views.blog_post, name='blog_post'),
     path('addpost/', views.add_post, name='add_post'),
+    path('editpost/<int:pk>/', views.edit_post, name='edit_post'),
     re_path(r'^froala_editor/', include('froala_editor.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

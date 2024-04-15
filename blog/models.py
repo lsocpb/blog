@@ -15,6 +15,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField(Tag)
+    visible = models.BooleanField(default=True)
+    author = models.CharField(max_length=50)
 
     def __str__(self):
         return self.title
