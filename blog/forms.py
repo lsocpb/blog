@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms.widgets import PasswordInput, TextInput
 from froala_editor.widgets import FroalaEditor
 
-from blog.models import Post
+from blog.models import Post, Tag
 from django.forms import ModelForm
 
 
@@ -46,7 +46,8 @@ class PostForm(ModelForm):
                             widget=forms.TextInput(
                                 attrs={'class': 'w-full focus:ring-0 h-full focus:outline-none text-2xl'}))
     content = forms.CharField(widget=FroalaEditor)
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple)
 
     class Meta:
         model = Post
-        fields = ('title', 'content')
+        fields = ('title', 'content', 'tags')
