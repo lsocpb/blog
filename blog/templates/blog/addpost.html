@@ -1,35 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
-    <form method="post" class="mt-16">
-        {% csrf_token %}
-        <div>
-            <h1 class="font-bold text-blue-600"> {{ form.title.label }}</h1>
-            <div class="border p-3 text-md focus:outline-none focus:ring-0 focus:ring-offset-0 border-blue-300">{{ form.title }}</div>
-        </div>
-        <div>
-            <h1 class="font-bold text-blue-600">Tags</h1>
-            <label>
-                <select name="tags" multiple
-                        class="border p-3 text-md focus:outline-none focus:ring-0 focus:ring-offset-0 border-blue-300">
-                    {% for tag in form.tags.field.queryset %}
-                        <option value="{{ tag.pk }}">{{ tag.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-        </div>
-        <div>
-            <h1 class="font-bold text-blue-600"> {{ form.content.label }}</h1>
-            <div class="w-full mx-auto container">
-                {{ form.content|safe }}
-            </div>
-        </div>
-
-
-        <input type="submit" value="Submit"
-               class="cursor-pointer p-3 bg-blue-300 text-blue-600 rounded text-2xl mt-3 font-bold">
-
-
-    </form>
+<div class="container mx-auto" style="margin-left: 5px">
+    {% include 'post_form.html' %}
+</div>
 {% endblock content %}

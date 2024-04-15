@@ -20,6 +20,12 @@
     <div class="post-title">
         <h1>{{ post.title | linebreaks }}</h1>
     </div>
+    <div class="post-author">
+        <small>Author: {{ post.author }}</small>
+    </div>
+    <div class="post-description">
+        <p>{{ post.short_description | safe }}</p>
+    </div>
     <div class="post-content">
         <p>{{ post.content | safe }}</p>
     </div>
