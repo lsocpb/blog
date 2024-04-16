@@ -15,7 +15,8 @@ class Post(models.Model):
     content = FroalaField()
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-    tags = models.ManyToManyField(Tag)
+    featured_image = models.URLField(blank=True, null=True)
+    tags = models.ManyToManyField(Tag, blank=True)
     visible = models.BooleanField(default=True)
     author = models.CharField(max_length=50)
 

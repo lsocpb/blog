@@ -91,6 +91,8 @@ def add_post(request):
             post.save()
             form.save_m2m()
             return redirect('blog_index')
+        else:
+            print(form.errors)
     else:
         form = PostForm()
     return render(request, 'blog/templates/blog/addpost.html', {'form': form})
