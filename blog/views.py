@@ -124,3 +124,13 @@ def delete_post(request, pk):
     post = Post.objects.get(pk=pk)
     post.delete()
     return redirect('blog_index')
+
+
+def search_posts(request):
+    query = request.GET.get('q', '')
+    posts = Post.objects.filter(title__icontains=query)
+    context = {
+        'posts': posts,
+        'query': query,
+    }
+    return render(request, 'blog/templates/blog/search.html', context)

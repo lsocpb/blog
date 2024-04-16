@@ -10,5 +10,6 @@ urlpatterns = [
     path('addpost/', views.add_post, name='add_post'),
     path('editpost/<int:pk>/', views.edit_post, name='edit_post'),
     path('deletepost/<int:pk>/', views.delete_post, name='delete_post'),
+    path('search/', views.search_posts, name='search_posts'),
     re_path(r'^froala_editor/', include('froala_editor.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

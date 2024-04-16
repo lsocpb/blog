@@ -4,13 +4,6 @@
 {% endblock %}
 {% block content %}
     <div class="container" style="display: inline; width: 1040px; justify-content: space-evenly; flex-wrap: wrap;">
-
-    <form action="{% url 'search_posts' %}" method="GET" style="margin: 10px;">
-        <label>
-            <input type="text" name="q" placeholder="Search posts" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc; width: 300px;">
-        </label>
-    </form>
-
         {% block posts %}
             {% for post in posts %}
 
