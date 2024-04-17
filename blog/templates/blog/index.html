@@ -3,18 +3,12 @@
     <h2>Blog Posts</h2>
 {% endblock %}
 {% block content %}
-    <div class="container" style="display: inline; width: 1040px; justify-content: space-evenly; flex-wrap: wrap;">
-
-    <form action="{% url 'search_posts' %}" method="GET" style="margin: 10px;">
-        <label>
-            <input type="text" name="q" placeholder="Search posts" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc; width: 300px;">
-        </label>
-    </form>
+    <div class="container" style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-wrap: wrap;">
 
         {% block posts %}
             {% for post in posts %}
 
-                <div class="card" style="margin: 10px; background-color: #fff; border-radius: 10px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2); overflow: hidden; width: 300px;">
+                <div class="card" style=" margin: 10px; background-color: #fff; border-radius: 10px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2); overflow: hidden; width: 300px;">
                     {% if user.is_authenticated or post.visible %}
 
                     <div class="card-body">
