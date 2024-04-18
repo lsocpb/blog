@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activation</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,800" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f6f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: 'Montserrat', sans-serif;
+            height: 50vh;
+        }
+
+        h2, h3 {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        div {
+            text-align: center;
+        }
+
+        a {
+            color: #1d65d0;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body data-aos="fade-in">
+    <div>
+        <h2>Hey {{ user.username }}</h2>
+        <h3>We noticed you just signed up on our website</h3>
+        <p>Please <a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}"><strong>confirm your email address</strong> and activate your account</a></p>
+    </div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>AOS.init()</script>
+</body>
+</html>

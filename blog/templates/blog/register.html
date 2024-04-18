@@ -108,8 +108,8 @@
             <h1>Register <a>To stay tuned!</a></h1>
         </div>
         {% csrf_token %}
-        {% for field in registerform %}
-            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" placeholder="{{ field.label }}">
+        {% for field in form %}
+            <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" placeholder="{{ field.label }}">
             {% if field.errors %}
                 <div class="error-message">
                     {% for error in field.errors %}

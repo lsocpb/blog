@@ -1,11 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.views.generic import CreateView, RedirectView, TemplateView
+
 from blog.models import Post, Comment, Tag
-from blog.forms import CommentForm
-from blog.forms import CustomUserCreationForm, CustomAuthenticationForm, PostForm
+from blog.forms import CommentForm, SignUpForm, user_model
+from blog.forms import CustomAuthenticationForm, PostForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import auth
+
+from blog.token import token_generator
 
 
 def blog_index(request):
@@ -48,17 +55,48 @@ def blog_post(request, pk):
     return render(request, 'blog/templates/blog/post.html', context)
 
 
-def register(request):
-    form = CustomUserCreationForm()
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_index')
+class SignUpView(CreateView):
+    form_class = SignUpForm
+    template_name = 'blog/templates/blog/register.html'
+    success_url = reverse_lazy('check_email')
 
-    context = {'registerform': form}
-    return render(request, 'blog/templates/blog/register.html', context)
+    def form_valid(self, form):
+        to_return = super().form_valid(form)
 
+        user = form.save()
+        user.is_active = False
+        user.save()
+
+        form.send_activation_email(self.request, user)
+
+        return to_return
+
+class ActivateView(RedirectView):
+
+    url = reverse_lazy('blog_index')
+
+    # Custom get method
+    def get(self, request, uidb64, token):
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = user_model.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
+            user = None
+
+        if user is not None and token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)
+            return super().get(request, uidb64, token)
+        else:
+            return render(request, 'blog/templates/blog/activate_invalid.html')
+
+class CheckEmailView(TemplateView):
+    template_name = 'blog/templates/blog/check_email.html'
+
+class SuccessView(TemplateView):
+    template_name = 'blog/templates/blog/index.html'
 
 def user_login(request):
     form = CustomAuthenticationForm()
