@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserChangeForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-from django.views.generic import CreateView, RedirectView, TemplateView
+from django.views.generic import CreateView, RedirectView, TemplateView, UpdateView
 
 from blog.models import Post, Comment, Tag
 from blog.forms import CommentForm, SignUpForm, user_model
@@ -172,3 +173,16 @@ def search_posts(request):
         'query': query,
     }
     return render(request, 'blog/templates/blog/search.html', context)
+
+@login_required
+def user_edit_view(request):
+    if request.method == 'POST':
+        form = UserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_index')
+    else:
+        form = UserChangeForm(instance=request.user)
+    return render(request, 'blog/profile.html', {'form': form})
+
+

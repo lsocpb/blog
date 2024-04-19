@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-from blog.views import user_login, user_logout, add_post
+from blog.views import user_login, user_logout, add_post, user_edit_view
 from blog.views import (
     SignUpView,
     ActivateView,
@@ -34,5 +34,6 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
     path('addpost/', add_post, name='addpost'),
+    path('profile/', user_edit_view, name='profile'),
     re_path(r'^froala_editor/', include('froala_editor.urls')),
 ]
