@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.forms.widgets import PasswordInput, TextInput
 from django.template.loader import render_to_string
@@ -81,3 +81,17 @@ class PostForm(ModelForm):
         model = Post
         fields = ('title', 'short_description', 'content', 'tags', 'visible', 'featured_image')
 
+
+class ProfileForm(UserChangeForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    date_joined = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'class': 'form-control'}))
+    password = None
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['date_joined'].widget.attrs['readonly'] = True
+        for fieldname in ['username']:
+            self.fields[fieldname].help_text = None
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'date_joined')

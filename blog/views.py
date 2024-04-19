@@ -8,8 +8,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, RedirectView, TemplateView, UpdateView
 
 from blog.models import Post, Comment, Tag
-from blog.forms import CommentForm, SignUpForm, user_model
-from blog.forms import CustomAuthenticationForm, PostForm
+from blog.forms import CommentForm, SignUpForm, user_model, CustomAuthenticationForm, PostForm, ProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import auth
 
@@ -174,15 +173,13 @@ def search_posts(request):
     }
     return render(request, 'blog/templates/blog/search.html', context)
 
-@login_required
-def user_edit_view(request):
-    if request.method == 'POST':
-        form = UserChangeForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_index')
-    else:
-        form = UserChangeForm(instance=request.user)
-    return render(request, 'blog/profile.html', {'form': form})
+
+class ProfileView(UpdateView):
+    form_class = ProfileForm
+    template_name = 'blog/templates/blog/profile.html'
+    success_url = reverse_lazy('blog_index')
+
+    def get_object(self):
+        return self.request.user
 
 
