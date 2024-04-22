@@ -71,8 +71,8 @@ class SignUpView(CreateView):
 
         return to_return
 
-class ActivateView(RedirectView):
 
+class ActivateView(RedirectView):
     url = reverse_lazy('blog_index')
 
     # Custom get method
@@ -92,11 +92,14 @@ class ActivateView(RedirectView):
         else:
             return render(request, 'blog/templates/blog/activate_invalid.html')
 
+
 class CheckEmailView(TemplateView):
     template_name = 'blog/templates/blog/check_email.html'
 
+
 class SuccessView(TemplateView):
     template_name = 'blog/templates/blog/index.html'
+
 
 def user_login(request):
     form = CustomAuthenticationForm()
@@ -181,5 +184,3 @@ class ProfileView(UpdateView):
 
     def get_object(self):
         return self.request.user
-
-
