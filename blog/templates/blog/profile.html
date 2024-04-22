@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,800" rel="stylesheet">
+        <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css"/>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                background: #f6f5f7;
+            }
+
+            .container {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .profile {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .form-container {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .form-container form {
+                margin-top: 20px;
+            }
+
+            .form-container form label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+            }
+
+            .form-container form input[type="text"],
+            .form-container form input[type="email"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                transition: border-color 0.3s ease;
+            }
+
+            .form-container form input[type="text"]:focus,
+            .form-container form input[type="email"]:focus {
+                border-color: #1d65d0;
+                outline: none;
+            }
+
+            .form-container form input[type="submit"] {
+                background-color: #1d65d0;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .form-container form input[type="submit"]:hover {
+                background-color: #144a99;
+            }
+
+            .profile h1 a {
+                color: #1d65d0;
+                text-decoration: none;
+            }
+
+            .form-container h2 {
+                text-align: center;
+            }
+
+            .form-container h2 a {
+                color: #1d65d0;
+                text-decoration: none;
+            }
+            
+        </style>
+    </head>
+    <div data-aos="fade-in">
+        <div class="container">
+            <div class="profile">
+                <h1>Hi, <a>{{ user.username }}</a> !</h1>
+            </div>
+            <div class="form-container">
+                <h2>Your <a>details</a></h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Update">
+                </form>
+            </div>
+            <h1 style="text-align: center">Your recent posts!</h1>
+            <div class="container-posts">
+                {% for post in user_posts %}
+                    <div class="card">
+                        <h3 class="title">{{ post.title }}</h3>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>AOS.init()</script>
+    </body>
+    </html>
+{% endblock content %}
