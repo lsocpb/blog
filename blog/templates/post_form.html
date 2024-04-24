@@ -46,7 +46,7 @@
                 }, (error, result) => {
                     if (!error && result && result.event === "success") {
                         var url = result.info.secure_url;
-                        document.getElementById("featured_image").value = url;
+                        document.getElementById("id_featured_image_url").value = url;
                         console.log(url);
                     }
                 }
@@ -57,8 +57,8 @@
         </script>
     </div>
     <div class="w-full mx-auto container" style="margin-top: 5px">
-        <h3 class="font-bold text-blue-600">Featured Image</h3>
-        {{ form.featured_image }}
+        <h3 class="font-bold text-blue-600">Featured Image 123</h3>
+        {{ form.featured_image_url }}
     </div>
 
     <input type="submit" value="Submit" style="margin-top: 5px;"
