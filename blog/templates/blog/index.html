@@ -8,15 +8,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            flex-direction: column;
+            min-height: 100%;
         }
 
         .card-container {
             display: flex;
-            flex-direction: column; 
+            flex-direction: column;
             align-items: center;
-            margin-top: 2500px;
         }
 
         .card {
@@ -67,7 +65,119 @@
             display: flex;
             flex-direction: column;
         }
+
+        .hero-section {
+            color: #e5e5e5;
+            font-size: 2.26rem;
+            text-transform: uppercase;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -120px;
+        }
+
+        .hero-logo {
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .hero-section h1 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .animation {
+            height: 70px;
+            overflow: hidden;
+            margin-left: 1rem;
+        }
+
+        .animation > div > div {
+            padding: 0 2rem;
+            height: 3rem;
+            margin-bottom: 3rem;
+            display: inline-block;
+        }
+
+        .animation div:first-child {
+            animation: text-animation 8s infinite;
+        }
+
+        .first div {
+            background-color: #20a7d8;
+        }
+
+        .second div {
+            background-color: #CD921E;
+        }
+
+        .third div {
+            background-color: #c10528;
+        }
+
+        @keyframes text-animation {
+            0% {
+                margin-top: 0;
+            }
+            10% {
+                margin-top: 0;
+            }
+            20% {
+                margin-top: -5.62rem;
+            }
+            30% {
+                margin-top: -5.62rem;
+            }
+            40% {
+                margin-top: -11.24rem;
+            }
+            60% {
+                margin-top: -11.24rem;
+            }
+            70% {
+                margin-top: -5.62rem;
+            }
+            80% {
+                margin-top: -5.62rem;
+            }
+            90% {
+                margin-top: 0;
+            }
+            100% {
+                margin-top: 0;
+            }
+        }
+
+        .title h1 {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 300;
+            color: #222;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            align-items: center;
+        }
+
     </style>
+    <div class="title" style="margin-top: 30px">
+        <h1>WELCOME <a style="color: #1d65d0">{{ user.username }}!</a></h1>
+    </div>
+    <div class="hero-section">
+        <img src="https://thumbs.dreamstime.com/z/indyjski-agent-call-center-pokazuje-ok-gest-pokazywanie-gestu-przeciwko-operatorom-pracuj%C4%85cym-w-jasnym-biurze-173649185.jpg"
+             alt="logo" class="hero-logo">
+        <section class="animation">
+            <div class="first">
+                <div>BLOGGERS!</div>
+            </div>
+            <div class="second">
+                <div>BEST BLOGGING WEBSITE</div>
+            </div>
+            <div class="third">
+                <div>YOU'VE EVER SEEN!</div>
+            </div>
+        </section>
+    </div>
+    <h1 style="text-align: center">Recent <a style="color: #1d65d0">Posts</a></h1>
     <div class="container">
         <div class="card-container">
             {% block posts %}
@@ -82,7 +192,9 @@
                                 {% endfor %}
                                 <h4><a href="{% url 'blog_post' post.pk %}">{{ post.title }}</a></h4>
                                 <p>{{ post.short_description|safe }}</p>
-                                <img src="{{ post.featured_image_url }}" style="width: 100%; height: 400px; object-fit: cover; object-position: center;" alt="{{ post.title }}">
+                                <img src="{{ post.featured_image_url }}"
+                                     style="width: 100%; height: 400px; object-fit: cover; object-position: center;"
+                                     alt="{{ post.title }}">
                                 <div class="user">
                                     <div class="user-info">
                                         <h5>Author: {{ post.author }}</h5>
