@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
@@ -169,7 +170,8 @@ def delete_post(request, pk):
 
 def search_posts(request):
     query = request.GET.get('q', '')
-    posts = Post.objects.filter(title__icontains=query)
+    posts = Post.objects.filter(Q(title__icontains=query) | Q(short_description__icontains=query) |
+                                Q(content__icontains=query) | Q(tags__name__icontains=query)).order_by('-created_at')
     context = {
         'posts': posts,
         'query': query,

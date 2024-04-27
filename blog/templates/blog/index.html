@@ -191,7 +191,41 @@
                                     </a>
                                 {% endfor %}
                                 <h4><a href="{% url 'blog_post' post.pk %}">{{ post.title }}</a></h4>
-                                <p>{{ post.short_description|safe }}</p>
+                                <p class="short-description">{{ post.short_description|safe }}</p>
+                                <script>
+                                    function getLineHeight(element) {
+                                        var temp = document.createElement(element.nodeName);
+                                        temp.setAttribute("style", "margin:0; padding:0; font-family:" + getComputedStyle(element).fontFamily + "; font-size:" + getComputedStyle(element).fontSize);
+                                        temp.innerHTML = "A";
+                                        document.body.appendChild(temp);
+                                        var lineHeight = temp.clientHeight;
+                                        document.body.removeChild(temp);
+                                        return lineHeight;
+                                    }
+
+                                    var shortDescription = document.querySelectorAll('.short-description');
+
+                                    shortDescription.forEach(function (element) {
+
+                                        var lineHeight = getLineHeight(element);
+                                        var maxHeight = lineHeight * 4;
+                                        element.style.maxHeight = maxHeight + 'px';
+
+                                        console.log(element.scrollHeight + ' ' + lineHeight + ' ' + maxHeight + ' ' + window.getComputedStyle(element).lineHeight);
+
+                                        if (element.scrollHeight > maxHeight) {
+
+                                            console.log(element.scrollHeight);
+
+                                            while (element.scrollHeight > maxHeight) {
+
+                                                element.textContent = element.textContent.replace(/\s+\S*$/, '');
+                                            }
+
+                                            element.textContent += '...';
+                                        }
+                                    });
+                                </script>
                                 <img src="{{ post.featured_image_url }}"
                                      style="width: 100%; height: 400px; object-fit: cover; object-position: center;"
                                      alt="{{ post.title }}">
@@ -208,4 +242,7 @@
             {% endblock %}
         </div>
     </div>
+
+
 {% endblock %}
+
