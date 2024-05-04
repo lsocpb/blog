@@ -14,6 +14,7 @@ from blog.models import Post, Tag
 from django.forms import ModelForm
 
 from blog.token import token_generator
+from captcha.fields import CaptchaField
 
 user_model = get_user_model()
 
@@ -34,6 +35,7 @@ class CommentForm(forms.Form):
 
 
 class SignUpForm(UserCreationForm):
+
     class Meta:
         model = user_model
         fields = [
@@ -69,6 +71,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         "class": "form-control",
         "placeholder": "Password"
     }))
+    captcha = CaptchaField()
 
 
 class PostForm(ModelForm):

@@ -45,7 +45,12 @@ INSTALLED_APPS = [
     # Forms
     'crispy_forms',
     'crispy_bootstrap5',
+    'captcha'
 ]
+
+CAPTCHA_LENGTH = 6
+CAPTCHA_FONT_SIZE = 30
+
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 

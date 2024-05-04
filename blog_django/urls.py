@@ -54,5 +54,6 @@ urlpatterns = [
     path('password-reset-complete/',
          PasswordResetCompleteView.as_view(template_name="blog/templates/blog/reset_password_complete.html"),
          name="password_reset_complete"),
+    path('captcha/', include('captcha.urls')),
     re_path(r'^froala_editor/', include('froala_editor.urls')),
 ]
