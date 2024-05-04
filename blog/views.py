@@ -9,10 +9,9 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, RedirectView, TemplateView, UpdateView
 
 from blog.models import Post, Comment, Tag
-from blog.forms import CommentForm, SignUpForm, user_model, CustomAuthenticationForm, PostForm, ProfileForm
+from blog.forms import CommentForm, SignUpForm, user_model, CustomAuthenticationForm, PostForm, ProfileForm, PasswordResetForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import auth
-
 from blog.token import token_generator
 
 

@@ -16,7 +16,7 @@
             <h1>Sign in</h1>
             {{ loginform.username }}
             {{ loginform.password }}
-            <a href="#">Forgot your password?</a>
+            <a href='{% url 'password_reset' %}'>Forgot your password?</a>
             {% csrf_token %}
             <button type="submit">Sign In</button>
         </form>
