@@ -1,22 +1,25 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from django.contrib.auth.models import User
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordResetForm, \
     SetPasswordForm
 from django.contrib.sites.shortcuts import get_current_site
+from django.forms import ModelForm
 from django.forms.widgets import PasswordInput, TextInput
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV2Invisible, ReCaptchaV2Checkbox
 from froala_editor.widgets import FroalaEditor
 
 from blog.models import Post, Tag
-from django.forms import ModelForm
-
 from blog.token import token_generator
-from captcha.fields import CaptchaField
 
 user_model = get_user_model()
+
 
 class CommentForm(forms.Form):
     author = forms.CharField(
@@ -35,6 +38,10 @@ class CommentForm(forms.Form):
 
 
 class SignUpForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
 
     class Meta:
         model = user_model
@@ -63,6 +70,9 @@ class SignUpForm(UserCreationForm):
 
 
 class CustomAuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(CustomAuthenticationForm, self).__init__(*args, **kwargs)
+
     username = forms.CharField(widget=TextInput(attrs={
         "class": "form-control",
         "placeholder": "Username"
@@ -71,7 +81,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         "class": "form-control",
         "placeholder": "Password"
     }))
-    captcha = CaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaV2Invisible())
 
 
 class PostForm(ModelForm):
@@ -96,6 +106,7 @@ class ProfileForm(UserChangeForm):
         self.fields['date_joined'].widget.attrs['readonly'] = True
         for fieldname in ['username']:
             self.fields[fieldname].help_text = None
+
     class Meta:
         model = User
         fields = ('username', 'email', 'date_joined')

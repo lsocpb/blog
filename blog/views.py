@@ -1,18 +1,17 @@
-from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.models import auth
 from django.db.models import Q
-from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, RedirectView, TemplateView, UpdateView
 
-from blog.models import Post, Comment, Tag
-from blog.forms import CommentForm, SignUpForm, user_model, CustomAuthenticationForm, PostForm, ProfileForm, PasswordResetForm
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import auth
+from blog.forms import CommentForm, SignUpForm, user_model, CustomAuthenticationForm, PostForm, ProfileForm
+from blog.models import Post, Comment
 from blog.token import token_generator
 
 

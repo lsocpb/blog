@@ -11,10 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
-from .cloudinary_config import configure_cloudinary
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'froala_editor',
+    'django_recaptcha',
     # Forms
     'crispy_forms',
     'crispy_bootstrap5',
@@ -163,4 +161,7 @@ EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY')
 
 DEFAULT_FROM_EMAIL = env('FROM_EMAIL')
 
-
+# Recaptcha conf
+RECAPTCHA_PUBLIC_KEY = '6LfJ6cUpAAAAANpirNZr2WzzXdJU6TJvA_-XN_d4'
+RECAPTCHA_PRIVATE_KEY = '6LfJ6cUpAAAAAIjfpcgXAti8VKeG1uM_ml7ml6gh'
+RECAPTCHA_URL = 'https://hsup.me'
