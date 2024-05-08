@@ -20,7 +20,6 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, 
 from django.urls import path, include, re_path
 
 from blog.forms import ResetPasswordForm, NewPasswordForm
-from blog.views import user_login, user_logout, add_post
 from blog.views import (
     SignUpView,
     ActivateView,
@@ -28,6 +27,7 @@ from blog.views import (
     SuccessView,
     ProfileView,
 )
+from blog.views import user_login, user_logout, add_post
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,19 +41,20 @@ urlpatterns = [
     path('addpost/', add_post, name='addpost'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('password-reset/',
-         PasswordResetView.as_view(template_name="blog/templates/blog/reset_password.html", form_class=ResetPasswordForm),
+         PasswordResetView.as_view(template_name="blog/templates/blog/reset_password.html",
+                                   form_class=ResetPasswordForm),
          name="password_reset"),
 
-    path('password-reset/done/', PasswordResetDoneView.as_view(template_name="blog/templates/blog/reset_password_done.html"),
+    path('password-reset/done/',
+         PasswordResetDoneView.as_view(template_name="blog/templates/blog/reset_password_done.html"),
          name="password_reset_done"),
 
     path('password-reset-confirm/<uidb64>/<token>/',
          PasswordResetConfirmView.as_view(template_name="blog/templates/blog/reset_password_confirm.html",
-                                                form_class=NewPasswordForm), name="password_reset_confirm"),
+                                          form_class=NewPasswordForm), name="password_reset_confirm"),
 
     path('password-reset-complete/',
          PasswordResetCompleteView.as_view(template_name="blog/templates/blog/reset_password_complete.html"),
          name="password_reset_complete"),
-    path('captcha/', include('captcha.urls')),
     re_path(r'^froala_editor/', include('froala_editor.urls')),
 ]

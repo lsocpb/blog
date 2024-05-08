@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import auth
@@ -109,9 +109,19 @@ def user_login(request):
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
+
             if user is not None:
                 auth.login(request, user)
                 return redirect('blog_index')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            print(f"Errors: {form.errors.as_text()}")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, error)
+
+            return render(request, 'blog/templates/blog/login.html', {'loginform': form})
 
     context = {'loginform': form}
     return render(request, 'blog/templates/blog/login.html', context)
