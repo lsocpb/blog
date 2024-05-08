@@ -1,10 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
-from django.contrib.auth.models import User
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordResetForm, \
     SetPasswordForm
+from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.forms import ModelForm
 from django.forms.widgets import PasswordInput, TextInput
