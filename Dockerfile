@@ -10,6 +10,5 @@ RUN apt install pkg-config -y
 RUN apt install libmysqlclient-dev -y
 COPY . .
 RUN pip install -r requirements.txt
-COPY blog_django/.env /blog_django/.env
 ENTRYPOINT ["python3"]
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]

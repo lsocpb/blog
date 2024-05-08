@@ -7,3 +7,5 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     network_mode: host
+    env_file:
+    - blog_django/.env
