@@ -86,8 +86,14 @@ class PostForm(ModelForm):
     title = forms.CharField(label='Title',
                             widget=forms.TextInput(
                                 attrs={'class': 'w-full focus:ring-0 h-full focus:outline-none text-2xl'}))
+    short_description = forms.CharField(label='Short Description',
+                                        widget=forms.Textarea(
+                                            attrs={'class': 'w-full focus:ring-0 h-full focus:outline-none'}))
     content = forms.CharField(widget=FroalaEditor)
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple)
+    featured_image_url = forms.CharField(label='Featured Image URL',
+                                         widget=forms.TextInput(
+                                             attrs={'class': 'w-full focus:ring-0 h-full focus:outline-none'}))
 
     class Meta:
         model = Post
