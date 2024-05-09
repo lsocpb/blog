@@ -1,58 +1,87 @@
-<form method="post" class="mt-16">
-    {% csrf_token %}
-    <div>
-        <h1 class="font-bold text-blue-600"> {{ form.title.label }}</h1>
-        <div class="border p-3 text-md focus:outline-none focus:ring-0 focus:ring-offset-0 border-blue-300">{{ form.title }}</div>
-    </div>
-    <div>
-        <h1 class="font-bold text-blue-600"> {{ form.short_description.label }}</h1>
-        <div class="border p-3 text-md focus:outline-none focus:ring-0 focus:ring-offset-0 border-blue-300">{{ form.short_description }}</div>
-    </div>
-    <div>
-        <h1 class="font-bold text-blue-600">Tags</h1>
-        <label>
-            <select name="tags" multiple
-                    class="border p-3 text-md focus:outline-none focus:ring-0 focus:ring-offset-0 border-blue-300">
-                {% for tag in form.tags.field.queryset %}
-                    <option value="{{ tag.pk }}">{{ tag.name }}</option>
-                {% endfor %}
-            </select>
-        </label>
-    </div>
-    <div>
-        <h1 class="font-bold text-blue-600"> {{ form.content.label }}</h1>
-        <div class="w-full mx-auto container">
-            {{ form.content|safe }}
+<style>
+    input[type="text"] {
+        width: 300px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: vertical;
+    }
+</style>
+<div class="post" style="height: 100vh">
+    <form method="post">
+        {% csrf_token %}
+        <div class="post-header" style="font-size: 20px; font-weight: 600; display: block">
+            <h1> {{ form.title.label }}</h1>
+            <div>{{ form.title }}</div>
         </div>
-    </div>
-    <div>
-        <button id="upload-widget" class="cloudinary-button" type="button">Upload files</button>
-        <input type="hidden" id="featured_image" name="featured_image">
-        <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            var myWidget = cloudinary.createUploadWidget({
-                    cloudName: 'dllt0x1qq',
-                    uploadPreset: 'upload_unsigned'
-                }, (error, result) => {
-                    if (!error && result && result.event === "success") {
-                        var url = result.info.secure_url;
-                        document.getElementById("featured_image").value = url;
-                        console.log(url);
+        <div class="post-description">
+            <h1> {{ form.short_description.label }}</h1>
+            <div>{{ form.short_description }}</div>
+        </div>
+        <div class="post-tags-container" style="display: block">
+            <h1>Tags</h1>
+            <div style="margin-bottom: 15px">
+                <select name="tags" multiple class="custom-select" style="  background-color: #dedcdc;
+  color: #1c1a1a;
+  padding: 12px;
+  width: 250px;
+  border: none;
+  font-size: 20px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  -webkit-appearance: button;
+  outline: none;">
+                    {% for tag in form.tags.field.queryset %}
+                        <option value="{{ tag.pk }}"
+                                {% if tag in form.instance.tags.all %}selected{% endif %}>{{ tag.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="custom-select-arrow">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+        <div>
+            <input type="checkbox" id="visible" name="visible" value="visible" checked class="styled-checkbox">
+            <label for="visible" class="text-blue-600">Visible</label>
+        </div>
+        <div class="post-content">
+            <h1> {{ form.content.label }}</h1>
+            <div class="input-wrapper">{{ form.content|safe }}</div>
+        </div>
+        <div class="post-image" style="margin-top: 5px; display: inline-block">
+            <h3>Featured Image</h3>
+            <div>{{ form.featured_image_url }}</div>
+        </div>
+        <div class="form-group" style="margin-top: 5px; display: block">
+            <button id="upload-widget" class="cloudinary-button post-button btn-primary" type="button">Upload files
+            </button>
+            <input type="hidden" id="featured_image" name="featured_image" style="width: 1000px">
+            <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+            <script type="text/javascript">
+                var myWidget = cloudinary.createUploadWidget({
+                        cloudName: 'dllt0x1qq',
+                        uploadPreset: 'upload_unsigned'
+                    }, (error, result) => {
+                        if (!error && result && result.event === "success") {
+                            var url = result.info.secure_url;
+                            document.getElementById("id_featured_image_url").value = url;
+                            console.log(url);
+                        }
                     }
-                }
-            )
-            document.getElementById("upload-widget").addEventListener("click", function () {
-                myWidget.open();
-            }, false);
-        </script>
-    </div>
-    <div>
-        <label>
-            <input type="checkbox" name="visible" value="visible" checked
-                   class="cursor-pointer p-3 bg-blue-300 text-blue-600 rounded text-2xl mt-3 font-bold">
-        </label>
-        <label for="visible" class="text-blue-600">Visible</label>
-    </div>
-    <input type="submit" value="Submit" style="margin-top: 5px;"
-           class="cursor-pointer p-3 bg-blue-300 text-blue-600 rounded text-2xl mt-3 font-bold">
-</form>
+                )
+                document.getElementById("upload-widget").addEventListener("click", function () {
+                    myWidget.open();
+                }, false);
+            </script>
+            <input type="submit" value="Submit" class="submit-button post-button btn-primary" style="height: 50px">
+        </div>
+    </form>
+</div>

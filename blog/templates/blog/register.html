@@ -27,7 +27,7 @@
         }
 
         form {
-            margin-top: 80px;
+            margin-top: 280px;
             background-color: #FFFFFF;
             display: flex;
             align-items: center;
@@ -41,7 +41,7 @@
             overflow: hidden;
             width: 768px;
             max-width: 100%;
-            min-height: 480px;
+            min-height: 650px;
         }
 
         input {
@@ -74,15 +74,15 @@
         }
 
         .required {
-            border-color: #ff0000; /* Kolor obramowania dla pola wymaganego */
+            border-color: #ff0000;
         }
 
         .invalid {
-            border-color: #ff0000; /* Kolor obramowania dla pola nieprawidłowego */
+            border-color: #ff0000;
         }
 
         .valid {
-            border-color: #00ff00; /* Kolor obramowania dla pola prawidłowego */
+            border-color: #00ff00;
         }
 
         .signin-text {
@@ -108,8 +108,8 @@
             <h1>Register <a>To stay tuned!</a></h1>
         </div>
         {% csrf_token %}
-        {% for field in registerform %}
-            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" placeholder="{{ field.label }}">
+        {% for field in form %}
+            <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" placeholder="{{ field.label }}">
             {% if field.errors %}
                 <div class="error-message">
                     {% for error in field.errors %}
@@ -118,6 +118,7 @@
                 </div>
             {% endif %}
         {% endfor %}
+        {{ form.captcha }}
         <input type="submit" value="Register">
     </form>
     <div class="signin-text">

@@ -1,11 +1,18 @@
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
-from blog.models import Post, Comment, Tag
-from blog.forms import CommentForm
-from blog.forms import CustomUserCreationForm, CustomAuthenticationForm, PostForm
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import auth
+from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.views.generic import CreateView, RedirectView, TemplateView, UpdateView
+
+from blog.forms import CommentForm, SignUpForm, user_model, CustomAuthenticationForm, PostForm, ProfileForm
+from blog.models import Post, Comment
+from blog.token import token_generator
 
 
 def blog_index(request):
@@ -48,16 +55,50 @@ def blog_post(request, pk):
     return render(request, 'blog/templates/blog/post.html', context)
 
 
-def register(request):
-    form = CustomUserCreationForm()
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_index')
+class SignUpView(CreateView):
+    form_class = SignUpForm
+    template_name = 'blog/templates/blog/register.html'
+    success_url = reverse_lazy('check_email')
 
-    context = {'registerform': form}
-    return render(request, 'blog/templates/blog/register.html', context)
+    def form_valid(self, form):
+        to_return = super().form_valid(form)
+
+        user = form.save()
+        user.is_active = False
+        user.save()
+
+        form.send_activation_email(self.request, user)
+
+        return to_return
+
+
+class ActivateView(RedirectView):
+    url = reverse_lazy('blog_index')
+
+    # Custom get method
+    def get(self, request, uidb64, token):
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = user_model.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
+            user = None
+
+        if user is not None and token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)
+            return super().get(request, uidb64, token)
+        else:
+            return render(request, 'blog/templates/blog/activate_invalid.html')
+
+
+class CheckEmailView(TemplateView):
+    template_name = 'blog/templates/blog/check_email.html'
+
+
+class SuccessView(TemplateView):
+    template_name = 'blog/templates/blog/index.html'
 
 
 def user_login(request):
@@ -68,9 +109,19 @@ def user_login(request):
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
+
             if user is not None:
                 auth.login(request, user)
                 return redirect('blog_index')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            print(f"Errors: {form.errors.as_text()}")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, error)
+
+            return render(request, 'blog/templates/blog/login.html', {'loginform': form})
 
     context = {'loginform': form}
     return render(request, 'blog/templates/blog/login.html', context)
@@ -128,9 +179,19 @@ def delete_post(request, pk):
 
 def search_posts(request):
     query = request.GET.get('q', '')
-    posts = Post.objects.filter(title__icontains=query)
+    posts = Post.objects.filter(Q(title__icontains=query) | Q(short_description__icontains=query) |
+                                Q(content__icontains=query) | Q(tags__name__icontains=query)).order_by('-created_at')
     context = {
         'posts': posts,
         'query': query,
     }
     return render(request, 'blog/templates/blog/search.html', context)
+
+
+class ProfileView(UpdateView):
+    form_class = ProfileForm
+    template_name = 'blog/templates/blog/profile.html'
+    success_url = reverse_lazy('blog_index')
+
+    def get_object(self):
+        return self.request.user
