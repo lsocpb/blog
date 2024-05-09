@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-haid9&55x@pm3w46xh^l&&al^cy^d$el(ny3=#m7u0m2hzdf55
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://*.hsup.me/', 'http://localhost:8000/', 'https://hsup.me']
 
 # Application definition
 
