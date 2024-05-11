@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -17,6 +21,7 @@ from blog.token import token_generator
 
 def blog_index(request):
     posts = Post.objects.all().order_by('-created_at')
+    logger.info(f"Posts: {posts}")
     context = {
         'posts': posts,
     }
@@ -25,6 +30,7 @@ def blog_index(request):
 
 def blog_tag(request, tag):
     posts = Post.objects.filter(tags__name__contains=tag).order_by('-created_at')
+    logger.info(f"Viewing tag: {tag} with posts: {posts}")
     context = {
         'tag': tag,
         'posts': posts,
@@ -34,6 +40,7 @@ def blog_tag(request, tag):
 
 def blog_post(request, pk):
     post = Post.objects.get(pk=pk)
+    logger.info(f"Viewing post: {post.title}")
     form = CommentForm()
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -68,7 +75,7 @@ class SignUpView(CreateView):
         user.save()
 
         form.send_activation_email(self.request, user)
-
+        logger.info("New user registered")
         return to_return
 
 
@@ -88,6 +95,7 @@ class ActivateView(RedirectView):
             user.is_active = True
             user.save()
             login(request, user)
+            logger.info(f"User {user.username} activated")
             return super().get(request, uidb64, token)
         else:
             return render(request, 'blog/templates/blog/activate_invalid.html')
@@ -112,9 +120,11 @@ def user_login(request):
 
             if user is not None:
                 auth.login(request, user)
+                logger.info(f"User {user.username} logged in")
                 return redirect('blog_index')
             else:
                 messages.error(request, 'Invalid username or password.')
+                logger.info(f"Failed login attempt")
         else:
             print(f"Errors: {form.errors.as_text()}")
             for field, errors in form.errors.items():
@@ -129,6 +139,7 @@ def user_login(request):
 
 def user_logout(request):
     auth.logout(request)
+    logger.info("User logged out")
     return redirect('blog_index')
 
 
@@ -141,6 +152,7 @@ def add_post(request):
             post.author = request.user.username
             post.save()
             form.save_m2m()
+            logger.info(f"New post added: {post.title}")
             return redirect('blog_index')
         else:
             print(form.errors)
@@ -160,6 +172,7 @@ def edit_post(request, pk):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
+            logger.info(f"Post edited: {post.title}")
             return redirect('blog_index')
         else:
             print(form.errors)
@@ -174,6 +187,7 @@ def delete_post(request, pk):
 
     post = Post.objects.get(pk=pk)
     post.delete()
+    logger.info(f"Post deleted: {post.title}")
     return redirect('blog_index')
 
 
@@ -181,6 +195,7 @@ def search_posts(request):
     query = request.GET.get('q', '')
     posts = Post.objects.filter(Q(title__icontains=query) | Q(short_description__icontains=query) |
                                 Q(content__icontains=query) | Q(tags__name__icontains=query)).order_by('-created_at')
+    logger.info(f"Search query: {query} with posts: {posts}")
     context = {
         'posts': posts,
         'query': query,

@@ -117,6 +117,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/log.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
