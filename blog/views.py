@@ -20,6 +20,17 @@ from blog.token import token_generator
 
 
 def blog_index(request):
+    """
+    Display an individual :model:`blog.Post`.
+
+    **Context**
+
+    ``posts``
+        An instance of :model:`blog.Post`.
+
+    **Template:**
+    """
+
     posts = Post.objects.all().order_by('-created_at')
     logger.info(f"Posts: {posts}")
     context = {
@@ -29,6 +40,20 @@ def blog_index(request):
 
 
 def blog_tag(request, tag):
+    """
+    Display an individual :model:`blog.Tag`.
+
+    **Context**
+
+    ``tag``
+        An instance of :model:`blog.Tag`.
+
+    ``posts``
+        An instance of :model:`blog.Post`.
+
+    **Template:**
+    """
+
     posts = Post.objects.filter(tags__name__contains=tag).order_by('-created_at')
     logger.info(f"Viewing tag: {tag} with posts: {posts}")
     context = {
@@ -39,6 +64,22 @@ def blog_tag(request, tag):
 
 
 def blog_post(request, pk):
+    """
+    Display an individual :model:`blog.Post`.
+
+    **Context**
+
+    ``post``
+        An instance of :model:`blog.Post`.
+
+    ``comments``
+        An instance of :model:`blog.Comment`.
+
+    ``form``
+        An instance of :model:`blog.CommentForm`.
+
+    **Template:**
+    """
     post = Post.objects.get(pk=pk)
     logger.info(f"Viewing post: {post.title}")
     form = CommentForm()
@@ -62,54 +103,10 @@ def blog_post(request, pk):
     return render(request, 'blog/templates/blog/post.html', context)
 
 
-class SignUpView(CreateView):
-    form_class = SignUpForm
-    template_name = 'blog/templates/blog/register.html'
-    success_url = reverse_lazy('check_email')
-
-    def form_valid(self, form):
-        to_return = super().form_valid(form)
-
-        user = form.save()
-        user.is_active = False
-        user.save()
-
-        form.send_activation_email(self.request, user)
-        logger.info("New user registered")
-        return to_return
-
-
-class ActivateView(RedirectView):
-    url = reverse_lazy('blog_index')
-
-    # Custom get method
-    def get(self, request, uidb64, token):
-
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = user_model.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
-            user = None
-
-        if user is not None and token_generator.check_token(user, token):
-            user.is_active = True
-            user.save()
-            login(request, user)
-            logger.info(f"User {user.username} activated")
-            return super().get(request, uidb64, token)
-        else:
-            return render(request, 'blog/templates/blog/activate_invalid.html')
-
-
-class CheckEmailView(TemplateView):
-    template_name = 'blog/templates/blog/check_email.html'
-
-
-class SuccessView(TemplateView):
-    template_name = 'blog/templates/blog/index.html'
-
-
 def user_login(request):
+    """
+    Log in a user.
+    """
     form = CustomAuthenticationForm()
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
@@ -138,6 +135,9 @@ def user_login(request):
 
 
 def user_logout(request):
+    """
+    Log out a user.
+    """
     auth.logout(request)
     logger.info("User logged out")
     return redirect('blog_index')
@@ -145,6 +145,14 @@ def user_logout(request):
 
 @login_required
 def add_post(request):
+    """
+    Add a post.
+
+    **Context**
+
+    ``form``
+        An instance of :model:`blog.PostForm`.
+    """
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -163,6 +171,14 @@ def add_post(request):
 
 @login_required()
 def edit_post(request, pk):
+    """
+    Edit a post.
+
+    **Context**
+
+    ``post``
+        An instance of :model:`blog.Post`.
+    """
     if request.user != Post.objects.get(pk=pk).author and not request.user.is_superuser:
         return redirect('blog_index')
 
@@ -182,6 +198,14 @@ def edit_post(request, pk):
 
 @login_required
 def delete_post(request, pk):
+    """
+    Delete a post.
+
+    **Context**
+
+    ``post``
+        An instance of :model:`blog.Post`.
+    """
     if request.user != Post.objects.get(pk=pk).author and not request.user.is_superuser:
         return redirect('blog_index')
 
@@ -192,6 +216,19 @@ def delete_post(request, pk):
 
 
 def search_posts(request):
+    """
+    Search for posts.
+
+    **Context**
+
+    ``posts``
+        An instance of :model:`blog.Post`.
+
+    ``query``
+        Search query.
+
+    **Template:**
+    """
     query = request.GET.get('q', '')
     posts = Post.objects.filter(Q(title__icontains=query) | Q(short_description__icontains=query) |
                                 Q(content__icontains=query) | Q(tags__name__icontains=query)).order_by('-created_at')
@@ -204,9 +241,92 @@ def search_posts(request):
 
 
 class ProfileView(UpdateView):
+    """
+    View for user profile.
+
+    **Context**
+
+    ``form``
+        An instance of :model:`forms.ProfileForm`.
+
+    """
     form_class = ProfileForm
     template_name = 'blog/templates/blog/profile.html'
     success_url = reverse_lazy('blog_index')
 
     def get_object(self):
         return self.request.user
+
+
+class SignUpView(CreateView):
+    """
+    View for user registration.
+
+    **Context**
+
+    ``form``
+        An instance of :model:`forms.SignUpForm`.
+
+    **Template:**
+    """
+    form_class = SignUpForm
+    template_name = 'blog/templates/blog/register.html'
+    success_url = reverse_lazy('check_email')
+
+    def form_valid(self, form):
+        to_return = super().form_valid(form)
+
+        user = form.save()
+        user.is_active = False
+        user.save()
+
+        form.send_activation_email(self.request, user)
+        logger.info("New user registered")
+        return to_return
+
+
+class ActivateView(RedirectView):
+    """
+    View for user activation.
+
+    **Context**
+
+    ``uidb64``
+        User ID encoded in base64.
+
+    ``token``
+        Token for user activation.
+    """
+    url = reverse_lazy('blog_index')
+
+    # Custom get method
+    def get(self, request, uidb64, token):
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = user_model.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
+            user = None
+
+        if user is not None and token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)
+            logger.info(f"User {user.username} activated")
+            return super().get(request, uidb64, token)
+        else:
+            return render(request, 'blog/templates/blog/activate_invalid.html')
+
+
+class CheckEmailView(TemplateView):
+    """
+    View for email confirmation.
+    """
+    template_name = 'blog/templates/blog/check_email.html'
+
+
+class SuccessView(TemplateView):
+    """
+    View for successful registration.
+    """
+    template_name = 'blog/templates/blog/index.html'

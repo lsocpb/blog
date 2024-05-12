@@ -3,6 +3,9 @@ from froala_editor.fields import FroalaField
 
 
 class Tag(models.Model):
+    """
+    Tag model for blog posts, related to :model:`blog.Post`.
+    """
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -10,6 +13,10 @@ class Tag(models.Model):
 
 
 class Post(models.Model):
+    """
+    Post model for blog posts.
+    """
+
     title = models.CharField(max_length=255)
     short_description = models.TextField()
     content = FroalaField()
@@ -25,6 +32,10 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
+    """
+    Comment model for blog posts, related to :model:`blog.Post`.
+    """
+
     author = models.CharField(max_length=50)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
