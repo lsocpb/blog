@@ -35,6 +35,7 @@ CSRF_TRUSTED_ORIGINS = ['https://*.hsup.me/', 'http://localhost:8000/', 'https:/
 
 INSTALLED_APPS = [
     'blog.apps.BlogConfig',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
