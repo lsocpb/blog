@@ -22,6 +22,19 @@ class TestTagModel:
         with pytest.raises(ValidationError):
             tag.full_clean()
 
+    # Test if the tag name is not empty
+    def test_tag_name_not_empty(self):
+        tag = Tag(name="")
+        with pytest.raises(ValidationError):
+            tag.full_clean()
+
+    # Test the unique constraint on the tag name field
+    def test_tag_name_unique(self):
+        Tag.objects.create(name="Django")
+        tag = Tag(name="Django")
+        with pytest.raises(ValidationError):
+            tag.full_clean()
+
 
 @pytest.mark.django_db
 class TestPostModel:
@@ -82,6 +95,32 @@ class TestPostModel:
         with pytest.raises(ValidationError):
             post.full_clean()
 
+    # Test blank featured_image_url
+    def test_post_blank_featured_image_url(self):
+        post = Post.objects.create(
+            title="No Image Post",
+            short_description="This post has no image.",
+            content="<p>No image content.</p>",
+            featured_image_url="",
+            author="Image Tester",
+        )
+        assert post.featured_image_url == ""
+
+    # Test post creation with multiple tags
+    def test_post_multiple_tags(self, tag):
+        tag2 = Tag.objects.create(name="Python")
+        post = Post.objects.create(
+            title="Post with Multiple Tags",
+            short_description="This post has multiple tags.",
+            content="<p>Multiple tags content.</p>",
+            featured_image_url="https://example.com/image4.jpg",
+            author="Tag Tester",
+        )
+        post.tags.add(tag, tag2)
+        assert post.tags.count() == 2
+        assert tag in post.tags.all()
+        assert tag2 in post.tags.all()
+
 
 @pytest.mark.django_db
 class TestCommentModel:
@@ -94,6 +133,17 @@ class TestCommentModel:
             featured_image_url="https://example.com/image3.jpg",
             author="Test User",
         )
+
+    # Test the creation of Comment model
+    def test_create_comment(self, post):
+        comment = Comment.objects.create(
+            author="John Doe",
+            content="Great post!",
+            post=post,
+        )
+        assert comment.author == "John Doe"
+        assert comment.content == "Great post!"
+        assert comment.post == post
 
     # Test the string representation of the Comment model
     def test_comment_string_representation(self, post):
@@ -118,3 +168,49 @@ class TestCommentModel:
         comment = Comment(author="A" * 51, content="Great post!", post=post)
         with pytest.raises(ValidationError):
             comment.full_clean()
+
+    # Test the cascade delete of comments when a post is deleted
+    def test_comment_cascade_delete(self, post):
+        comment = Comment.objects.create(
+            author="Jane Smith",
+            content="Nice article!",
+            post=post,
+        )
+        post.delete()
+        assert not Comment.objects.filter(id=comment.id).exists()
+
+    # Test comment content is not empty
+    def test_comment_content_not_empty(self, post):
+        comment = Comment(author="Jane Doe", content="", post=post)
+        with pytest.raises(ValidationError):
+            comment.full_clean()
+
+    # Test comment author is not empty
+    def test_comment_author_not_empty(self, post):
+        comment = Comment(author="", content="Great post!", post=post)
+        with pytest.raises(ValidationError):
+            comment.full_clean()
+
+    # Test comment ordering
+    def test_comment_ordering(self, post):
+        comment1 = Comment.objects.create(
+            author="Jane Smith",
+            content="Nice article!",
+            post=post,
+        )
+        comment2 = Comment.objects.create(
+            author="John Doe",
+            content="Great post!",
+            post=post,
+        )
+        assert list(post.comment_set.all()) == [comment1, comment2]
+        assert list(post.comment_set.all().order_by("-created_at")) == [comment2, comment1]
+
+    # Test comment created_at field
+    def test_comment_created_at(self, post):
+        comment = Comment.objects.create(
+            author="Jane Smith",
+            content="Nice article!",
+            post=post,
+        )
+        assert comment.created_at <= timezone.now()
