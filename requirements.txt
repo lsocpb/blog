@@ -21,4 +21,5 @@ iniconfig==2.0.0
 packaging==24.0
 pytest==8.2.0
 pytest-django==4.8.0
-exceptiongroup==1.2.1
+exceptiongroup==1.2.
+django-jazzmin~=3.0.0
