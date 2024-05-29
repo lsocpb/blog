@@ -23,7 +23,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     featured_image_url = models.URLField()
-    tags = models.ManyToManyField(Tag, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True, default=None)
     visible = models.BooleanField(default=True)
     author = models.CharField(max_length=50)
 

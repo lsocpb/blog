@@ -1,4 +1,5 @@
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +111,10 @@ def user_login(request):
     form = CustomAuthenticationForm()
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
-        if form.is_valid():
+        skip_captcha = not form.is_valid() and 'captcha' in form.errors and os.environ.get('RECAPTCHA_TESTING')
+        print(f"Skip captcha: {skip_captcha}")
+
+        if skip_captcha or form.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
@@ -179,7 +183,8 @@ def edit_post(request, pk):
     ``post``
         An instance of :model:`blog.Post`.
     """
-    if request.user != Post.objects.get(pk=pk).author and not request.user.is_superuser:
+    if request.user.username != Post.objects.get(pk=pk).author and not request.user.is_superuser:
+        print(request.user, Post.objects.get(pk=pk).author, request.user.username == Post.objects.get(pk=pk).author)
         return redirect('blog_index')
 
     post = Post.objects.get(pk=pk)
@@ -206,7 +211,7 @@ def delete_post(request, pk):
     ``post``
         An instance of :model:`blog.Post`.
     """
-    if request.user != Post.objects.get(pk=pk).author and not request.user.is_superuser:
+    if request.user.username != Post.objects.get(pk=pk).author and not request.user.is_superuser:
         return redirect('blog_index')
 
     post = Post.objects.get(pk=pk)

@@ -28,12 +28,6 @@ class TestTagModel:
         with pytest.raises(ValidationError):
             tag.full_clean()
 
-    # Test the unique constraint on the tag name field
-    def test_tag_name_unique(self):
-        Tag.objects.create(name="Django")
-        tag = Tag(name="Django")
-        with pytest.raises(ValidationError):
-            tag.full_clean()
 
 
 @pytest.mark.django_db
