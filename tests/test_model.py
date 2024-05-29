@@ -1,7 +1,8 @@
 import pytest
-from django.utils import timezone
-from blog.models import Tag, Post, Comment
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+
+from blog.models import Tag, Post, Comment
 
 
 @pytest.mark.django_db
@@ -27,7 +28,6 @@ class TestTagModel:
         tag = Tag(name="")
         with pytest.raises(ValidationError):
             tag.full_clean()
-
 
 
 @pytest.mark.django_db

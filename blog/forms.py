@@ -71,6 +71,7 @@ class SignUpForm(UserCreationForm):
         user.email_user(subject, message, html_message=message)
         logger.info(f"Activation email sent to {user.email}")
 
+
 class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(CustomAuthenticationForm, self).__init__(*args, **kwargs)
