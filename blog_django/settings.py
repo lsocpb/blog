@@ -16,8 +16,6 @@ import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-env = environ.Env()
-environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -28,18 +26,21 @@ SECRET_KEY = 'django-insecure-haid9&55x@pm3w46xh^l&&al^cy^d$el(ny3=#m7u0m2hzdf55
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*.hsup.me']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://*.hsup.me/', 'http://localhost:8000/', 'https://hsup.me']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.contenttypes',
     'blog.apps.BlogConfig',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
     'froala_editor',
     'django_recaptcha',
     # Forms
@@ -87,16 +88,74 @@ WSGI_APPLICATION = 'blog_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
+DATABASES = {}
+
+# Sendgrid conf
+EMAIL_HOST = ''
+EMAIL_PORT = 0
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+
+DEFAULT_FROM_EMAIL = ''
+
+# Recaptcha conf
+RECAPTCHA_PUBLIC_KEY = ''
+RECAPTCHA_PRIVATE_KEY = ''
+RECAPTCHA_URL = 'https://hsup.me'
+
+
+def init():
+    # try to get .env file
+    env_file = os.path.join(BASE_DIR, 'blog_django', ".env")
+    if not os.path.exists(env_file):
+        print(f"Environment file not found: {env_file}")
+        return
+
+    env = environ.Env()
+    environ.Env.read_env(env_file=env_file)
+
+    global DATABASES
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
+        }
     }
-}
+
+    # Sendgrid conf
+    global EMAIL_HOST, EMAIL_PORT, EMAIL_USE_TLS, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL
+    global RECAPTCHA_PUBLIC_KEY, RECAPTCHA_PRIVATE_KEY, RECAPTCHA_URL
+    EMAIL_HOST = 'smtp.sendgrid.net'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'apikey'
+    EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY')
+
+    DEFAULT_FROM_EMAIL = env('FROM_EMAIL')
+
+    # Recaptcha conf
+    RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY')
+    RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY')
+    RECAPTCHA_URL = 'https://hsup.me'
+
+    print(f"Initialized environment variables.")
+    print(f"DATABASES: {DATABASES}"
+          f"EMAIL_HOST: {EMAIL_HOST}"
+          f"EMAIL_PORT: {EMAIL_PORT}"
+          f"EMAIL_USE_TLS: {EMAIL_USE_TLS}"
+          f"EMAIL_HOST_USER: {EMAIL_HOST_USER}"
+          f"EMAIL_HOST_PASSWORD: {EMAIL_HOST_PASSWORD}"
+          f"DEFAULT_FROM_EMAIL: {DEFAULT_FROM_EMAIL}"
+          f"RECAPTCHA_PUBLIC_KEY: {RECAPTCHA_PUBLIC_KEY}"
+          f"RECAPTCHA_PRIVATE_KEY: {RECAPTCHA_PRIVATE_KEY}"
+          f"RECAPTCHA_URL: {RECAPTCHA_URL}")
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -115,6 +174,37 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/log.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -152,16 +242,4 @@ FROALA_UPLOAD_PATH = 'uploads/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Sendgrid conf
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY')
-
-DEFAULT_FROM_EMAIL = env('FROM_EMAIL')
-
-# Recaptcha conf
-RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY')
-RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY')
-RECAPTCHA_URL = 'https://hsup.me'
+init()

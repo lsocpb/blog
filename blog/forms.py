@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordResetForm, \
@@ -65,6 +69,7 @@ class SignUpForm(UserCreationForm):
         )
 
         user.email_user(subject, message, html_message=message)
+        logger.info(f"Activation email sent to {user.email}")
 
 
 class CustomAuthenticationForm(AuthenticationForm):
